@@ -1,16 +1,16 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
-import { useState, useEffect } from "react"
 
 export default function LoginPage() {
+  const [rotationY, setRotationY] = useState(0)
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
-  const [rotation, setRotation] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotation((prev) => prev + 1)
+      setRotationY((prev) => prev + 1)
     }, 30)
     return () => clearInterval(interval)
   }, [])
@@ -25,31 +25,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {/* Cubo girando com logo */}
-      <div className="w-40 h-40 mb-10 relative perspective-[1000px]">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 overflow-hidden">
+      {/* Cubo 3D */}
+      <div className="w-[200px] h-[200px] perspective-[800px] mb-6">
         <div
-          className="absolute w-full h-full transform-style-preserve-3d"
+          className="relative w-full h-full transform-style-preserve-3d"
           style={{
-            transform: `rotateY(${rotation}deg) rotateX(${rotation}deg)`
+            transform: `rotateY(${rotationY}deg)`
           }}
         >
-          {["front", "back", "right", "left", "top", "bottom"].map((face, i) => (
+          {[
+            { face: "Frente", transform: "rotateY(0deg) translateZ(100px)" },
+            { face: "Costas", transform: "rotateY(180deg) translateZ(100px)" },
+            { face: "Direita", transform: "rotateY(90deg) translateZ(100px)" },
+            { face: "Esquerda", transform: "rotateY(-90deg) translateZ(100px)" },
+            { face: "Topo", transform: "rotateX(90deg) translateZ(100px)" },
+            { face: "Base", transform: "rotateX(-90deg) translateZ(100px)" },
+          ].map((side, i) => (
             <div
-              key={face}
-              className="absolute w-full h-full flex items-center justify-center bg-white border border-gray-300 shadow-md"
+              key={i}
+              className="absolute w-full h-full flex items-center justify-center bg-white shadow-md border"
               style={{
-                transform: [
-                  "translateZ(80px)",
-                  "rotateY(180deg) translateZ(80px)",
-                  "rotateY(90deg) translateZ(80px)",
-                  "rotateY(-90deg) translateZ(80px)",
-                  "rotateX(90deg) translateZ(80px)",
-                  "rotateX(-90deg) translateZ(80px)"
-                ][i],
+                transform: side.transform
               }}
             >
-              <img src="/logo.png" alt="Logo" className="w-16 h-16" />
+              <img src="/logo.png" alt={side.face} className="w-20 h-20" />
             </div>
           ))}
         </div>
@@ -63,7 +63,7 @@ export default function LoginPage() {
         Cássio Moura Advocacia
       </h1>
 
-      {/* Campos de login */}
+      {/* Login */}
       <form
         onSubmit={handleLogin}
         className="bg-white p-6 rounded shadow-md w-80 space-y-4"
